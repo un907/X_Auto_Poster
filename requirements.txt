@@ -3,3 +3,4 @@ packaging
 customtkinter
 google-generativeai
 packaging
+pytest
