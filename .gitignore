@@ -1,0 +1,10 @@
+venv/
+dist/
+build/
+__pycache__/
+.DS_Store
+*.spec
+Output/
+Output_Mac_v1.6.0/
+*.zip
+profiles/

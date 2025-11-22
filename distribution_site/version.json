@@ -1,0 +1,5 @@
+{
+    "version": "1.7.0",
+    "download_url": "https://your-site.com/download",
+    "release_notes": "v1.7.0: Installer & Auto-Update support added. Browser path issues fixed."
+}

@@ -1,0 +1,9 @@
+{
+    "headless": false,
+    "wait_min": 0,
+    "wait_max": 1,
+    "gif_probability": 100,
+    "auto_like": true,
+    "gemini_api_key": "AIzaSyD-ScVGXjTNgVPA-xJzXtDk-P-BZr0pZlE",
+    "ai_mode": true
+}

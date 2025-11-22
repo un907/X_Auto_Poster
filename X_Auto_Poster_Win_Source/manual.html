@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X自動投稿アプリ 操作マニュアル</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            border-left: 5px solid #007bff;
+            padding-left: 10px;
+            margin-top: 30px;
+            background: #f4f4f4;
+            padding: 10px;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: #555;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            border-radius: 5px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .step {
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        @media print {
+            body {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            h2 {
+                page-break-before: auto;
+            }
+
+            img {
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>X自動投稿アプリ 操作マニュアル (v1.6)</h1>
+    <img src="assets/images/manual_cover_v16.png" alt="Cover"
+        style="width: 100%; max-width: 800px; border: none; box-shadow: none; margin-bottom: 40px;">
+
+    <h2>1. はじめに</h2>
+    <p>本アプリは、設定されたX（旧Twitter）アカウントを使用して、自動的にポスト（ツイート）を行うデスクトップアプリケーションです。<br>
+        v1.6では、<strong>AIペルソナ機能</strong>、<strong>単体実行機能</strong>、<strong>いいね数の範囲指定</strong>などが追加されました。</p>
+    <div class="note">
+        <strong>注意:</strong> 本アプリを使用する際は、必ずインターネットに接続してください。
+    </div>
+
+    <h2>2. 画面構成</h2>
+    <p>アプリを起動すると、以下のメイン画面が表示されます。</p>
+    <img src="main_ui.png" alt="メイン画面" style="height: 400px; object-fit: contain;">
+    <ul>
+        <li><strong>サイドバー（左側）</strong>: 操作ボタン、バージョン情報、設定ボタンがあります。</li>
+        <li><strong>ログタブ（右側）</strong>: 動作ログが表示されます。</li>
+        <li><strong>アカウント一覧タブ（右側）</strong>: 各アカウントのステータスと最終実行時間が表示されます。</li>
+    </ul>
+
+    <h2>3. 事前準備 (アカウントリストの作成)</h2>
+    <p>アプリを動かすために、アカウント情報が書かれた <code>accounts.csv</code> というファイルを作成して、アプリと同じフォルダに入れる必要があります。<br>
+        普段お使いの <strong>Googleスプレッドシート</strong> や <strong>Excel</strong> を使って簡単に作成できます。</p>
+
+    <h3>手順 1: スプレッドシートでデータを作成</h3>
+    <div class="step">
+        <span class="step-number">1.</span> 新しいスプレッドシート（またはExcel）を開きます。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> <strong>A1セル</strong> に <code>username</code> 、 <strong>B1セル</strong> に
+        <code>password</code> と入力します（半角英数）。
+    </div>
+    <div class="step">
+        <span class="step-number">3.</span> 2行目以降に、使用したいアカウントの <strong>ユーザー名（@以降）</strong> と <strong>パスワード</strong>
+        を入力していきます。
+    </div>
+    <img src="https://placehold.jp/30/dddddd/333333/600x200.png?text=A1:username%20B1:password%0A2%E8%A1%8C%E7%9B%AE%E4%BB%A5%E9%99%8D%E3%81%AB%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E6%83%85%E5%A0%B1"
+        alt="スプレッドシート入力例" style="height: auto; border: 1px solid #ccc;">
+    <div class="note">
+        <strong>注意:</strong> 1行目の <code>username</code> と <code>password</code> はそのままで、変更しないでください。
+    </div>
+
+    <h3>手順 2: CSV形式でダウンロード</h3>
+    <div class="step">
+        <span class="step-number">1.</span> メニューの <strong>「ファイル」</strong> をクリックします。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> <strong>「ダウンロード」</strong> &gt; <strong>「カンマ区切り形式 (.csv)」</strong>
+        を選択します。<br>
+        （Excelの場合は「名前を付けて保存」でファイルの種類を「CSV (コンマ区切り)」にします）
+    </div>
+
+    <h3>手順 3: ファイル名の変更と配置</h3>
+    <div class="step">
+        <span class="step-number">1.</span> ダウンロードしたファイルの名前を <code>accounts.csv</code> に変更します。<br>
+        （<code>accounts</code> だけではなく、拡張子 <code>.csv</code> まで確認してください）
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> そのファイルを、<strong>このアプリ（X_Auto_Poster）が入っているフォルダと同じ場所</strong> に移動してください。
+    </div>
+
+    <h2>4. 初回設定（ログイン）</h2>
+    <div class="step">
+        <span class="step-number">手順 1:</span> サイドバーの <strong>「初回ログイン設定（手動）」</strong> ボタンをクリックします。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 2:</span> ブラウザが起動し、Xのログイン画面が表示されます。手動でログインを行ってください。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 3:</span> ログインが完了し、ホーム画面が表示されると、アプリが自動的に検知してブラウザを閉じます。
+    </div>
+    <p>※ 全てのアカウントに対してこの操作を行ってください。</p>
+
+    <h2>5. 自動投稿の実行</h2>
+    <h3>一括実行</h3>
+    <div class="step">
+        <span class="step-number">手順 1:</span> サイドバーの <strong>「自動投稿開始」</strong> ボタンをクリックします（緑色のボタン）。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 2:</span> <strong>「アカウント一覧」</strong> タブに切り替えると、進捗状況を確認できます。
+    </div>
+
+    <h3>単体実行 (v1.6新機能)</h3>
+    <p>特定のアカウントだけをすぐに実行したい場合は、アカウント一覧の右側にある <strong>「▶」ボタン</strong> をクリックしてください。</p>
+
+    <img src="account_list_ui.png" alt="アカウント一覧画面" style="height: 400px; object-fit: contain;">
+    <p>ステータスの色は以下を表します：</p>
+    <ul>
+        <li><span style="color: gray;">■ 待機中</span>: まだ処理が始まっていません。</li>
+        <li><span style="color: orange;">■ 処理中</span>: 現在ログインまたは投稿を行っています。</li>
+        <li><span style="color: green;">■ 完了</span>: 投稿が正常に完了しました。</li>
+        <li><span style="color: red;">■ エラー</span>: 何らかの問題が発生しました（ログを確認してください）。</li>
+    </ul>
+
+    <h2>6. 設定の変更 (v1.6)</h2>
+    <p>サイドバーの <strong>「設定」</strong> ボタンをクリックすると、設定画面が開きます。</p>
+    <img src="settings_ui.png" alt="設定画面" style="height: 300px; object-fit: contain;">
+    <ul>
+        <li><strong>ヘッドレスモード</strong>: ブラウザ画面を表示せずに実行する場合はONにします（動作確認時はOFF推奨）。</li>
+        <li><strong>待機時間</strong>: アカウント切り替え時の待機時間をランダムな範囲で設定します。</li>
+        <li><strong>GIF添付確率</strong>: 投稿にGIF画像を添付する確率を設定します（0%で添付なし）。</li>
+        <li><strong>自動いいね (Min-Max)</strong>: 投稿前にタイムラインの投稿に「いいね」をする回数を範囲で指定できます（例: 1〜5回）。</li>
+        <li><strong>AIモード</strong>: Gemini APIを使用して、ペルソナに基づいた投稿文を自動生成します。</li>
+    </ul>
+
+    <h2>7. 自動更新について (v1.7)</h2>
+    <p>アプリ起動時に新しいバージョンがあるか自動的にチェックします。アップデートがある場合はダイアログが表示されるので、指示に従って最新版をダウンロードしてください。</p>
+</body>
+
+</html>

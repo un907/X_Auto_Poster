@@ -1,0 +1,5 @@
+playwright
+packaging
+customtkinter
+google-generativeai
+packaging

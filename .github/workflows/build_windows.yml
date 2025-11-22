@@ -1,0 +1,57 @@
+name: Build Windows App
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Install Playwright Browsers
+      run: |
+        playwright install chromium firefox
+
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --noconfirm --onefile --windowed --name "X_Auto_Poster" --add-data "settings.json;." --add-data "personas.json;." --add-data "accounts.csv;." --hidden-import=customtkinter --hidden-import=google.generativeai main.py
+
+    - name: Create Distribution Package
+      run: |
+        mkdir Output
+        copy dist\X_Auto_Poster.exe Output\
+        
+        # Copy browsers (Playwright installs to %USERPROFILE%\AppData\Local\ms-playwright on Windows usually, 
+        # but we need to bundle them. 
+        # A better way for CI is to download them to a local folder like the bat script does.)
+        
+    - name: Download Browsers Locally for Bundling
+      run: |
+        set PLAYWRIGHT_BROWSERS_PATH=%CD%\Output\browsers
+        playwright install chromium firefox
+
+    - name: Copy Documentation
+      run: |
+        copy "X_Auto_Poster_Win_Source\最初に読んで下さい.txt" Output\
+        if exist manual.html copy manual.html Output\
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: X_Auto_Poster_Windows_v1.6
+        path: Output/

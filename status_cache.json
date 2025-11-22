@@ -1,0 +1,31 @@
+{
+    "@uZhCzreGay86844": {
+        "status": "完了",
+        "color": "green",
+        "timestamp": "2025-11-21T21:26:42.124302",
+        "display_name": "稲田 元久",
+        "last_run": "2025-11-21T13:44:06.742722"
+    },
+    "SA7Pmd0lMi11642": {
+        "status": "分析中...",
+        "color": "purple",
+        "timestamp": "2025-11-21T21:26:43.128121",
+        "display_name": "しゅーと"
+    },
+    "ohrQE9cZnB39378": {
+        "status": "エラー",
+        "color": "red",
+        "timestamp": "2025-11-21T21:25:49.553538",
+        "display_name": "邦広"
+    },
+    "ReneaAJ6KW97241": {
+        "status": "エラー",
+        "color": "red",
+        "timestamp": "2025-11-21T21:24:52.094973"
+    },
+    "qzD8HovQL096899": {
+        "status": "凍結",
+        "color": "red",
+        "timestamp": "2025-11-21T21:26:12.010244"
+    }
+}
