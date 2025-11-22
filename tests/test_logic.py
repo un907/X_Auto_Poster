@@ -8,7 +8,16 @@ from unittest.mock import MagicMock, patch
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Mock customtkinter to avoid GUI issues during import
-sys.modules["customtkinter"] = MagicMock()
+mock_ctk = MagicMock()
+class MockCTk:
+    def __init__(self, *args, **kwargs):
+        pass
+    def mainloop(self):
+        pass
+mock_ctk.CTk = MockCTk
+mock_ctk.CTkToplevel = MagicMock
+mock_ctk.CTkFrame = MagicMock
+sys.modules["customtkinter"] = mock_ctk
 sys.modules["tkinter"] = MagicMock()
 
 import main
