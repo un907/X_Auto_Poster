@@ -32,6 +32,7 @@ jobs:
         pyinstaller --noconfirm --onefile --windowed --name "X_Auto_Poster" --add-data "settings.json;." --add-data "personas.json;." --add-data "accounts.csv;." --hidden-import=customtkinter --hidden-import=google.generativeai main.py
 
     - name: Create Distribution Package
+      shell: cmd
       run: |
         mkdir Output
         copy dist\X_Auto_Poster.exe Output\
@@ -41,11 +42,13 @@ jobs:
         # A better way for CI is to download them to a local folder like the bat script does.)
         
     - name: Download Browsers Locally for Bundling
+      shell: cmd
       run: |
         set PLAYWRIGHT_BROWSERS_PATH=%CD%\Output\browsers
         playwright install chromium firefox
 
     - name: Copy Documentation
+      shell: cmd
       run: |
         copy "X_Auto_Poster_Win_Source\最初に読んで下さい.txt" Output\
         if exist manual.html copy manual.html Output\
