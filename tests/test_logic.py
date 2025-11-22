@@ -7,8 +7,10 @@ from unittest.mock import MagicMock, patch
 # Add parent directory to path to import main
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Mock customtkinter to avoid GUI issues during import if necessary
-# But main.py imports it at top level, so we rely on it being installed.
+# Mock customtkinter to avoid GUI issues during import
+sys.modules["customtkinter"] = MagicMock()
+sys.modules["tkinter"] = MagicMock()
+
 import main
 
 class TestSettingsManager:
