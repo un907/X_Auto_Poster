@@ -53,6 +53,7 @@ jobs:
       shell: cmd
       run: |
         copy "X_Auto_Poster_Win_Source\最初に読んで下さい.txt" Output\
+        copy "X自動投稿アプリ 操作マニュアル.PDF" Output\
 
     - name: Create Zip Archive
       run: |

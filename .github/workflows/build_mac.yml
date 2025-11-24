@@ -64,6 +64,7 @@ jobs:
         
         # Copy Docs
         cp "X_Auto_Poster_Win_Source/最初に読んで下さい.txt" "$PACKAGE_DIR/"
+        cp "X自動投稿アプリ 操作マニュアル.PDF" "$PACKAGE_DIR/"
         
         # Zip it
         zip -r X_Auto_Poster_Mac_v1.8.zip "$PACKAGE_DIR"
