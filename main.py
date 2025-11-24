@@ -1429,9 +1429,13 @@ class AutoPostApp(ctk.CTk):
                         viewport={"width": 1280, "height": 720},
                         locale="ja-JP",
                         timezone_id="Asia/Tokyo",
-                        # Windows ChromeのUAに偽装
-                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                        ignore_default_args=["--enable-automation"]
+                        # Windows FirefoxのUA (エンジンと一致させる)
+                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
+                        ignore_default_args=["--enable-automation"],
+                        firefox_user_prefs={
+                            "dom.webdriver.enabled": False,
+                            "useAutomationExtension": False,
+                        }
                     )
                     context.add_init_script("""
                         Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -1710,9 +1714,13 @@ class AutoPostApp(ctk.CTk):
                         viewport={"width": 1280, "height": 720},
                         locale="ja-JP",
                         timezone_id="Asia/Tokyo",
-                        # Windows ChromeのUAに偽装
-                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                        ignore_default_args=["--enable-automation"]
+                        # Windows FirefoxのUA (エンジンと一致させる)
+                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
+                        ignore_default_args=["--enable-automation"],
+                        firefox_user_prefs={
+                            "dom.webdriver.enabled": False,
+                            "useAutomationExtension": False,
+                        }
                     )
                     
                     # ステルス化
@@ -1921,8 +1929,12 @@ class AutoPostApp(ctk.CTk):
                         viewport={"width": 1280, "height": 720},
                         locale="ja-JP",
                         timezone_id="Asia/Tokyo",
-                        user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0",
-                        ignore_default_args=["--enable-automation"]
+                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0",
+                        ignore_default_args=["--enable-automation"],
+                        firefox_user_prefs={
+                            "dom.webdriver.enabled": False,
+                            "useAutomationExtension": False,
+                        }
                     )
                     context.add_init_script("""
                         Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
