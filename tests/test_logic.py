@@ -22,7 +22,7 @@ sys.modules["tkinter"] = MagicMock()
 
 # Mock shutil and os.makedirs to prevent side effects during import
 sys.modules["shutil"] = MagicMock()
-with patch("os.makedirs"), patch("os.path.exists", return_value=True):
+with patch("os.makedirs"), patch("os.path.exists", return_value=True), patch("os.listdir", return_value=[]):
     import main
 
 class TestSettingsManager:
