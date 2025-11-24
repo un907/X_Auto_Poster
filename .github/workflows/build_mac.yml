@@ -72,7 +72,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: X_Auto_Poster_Mac_v1.6
+        name: X_Auto_Poster_Mac_v1.8
         path: X_Auto_Poster_Mac_v1.6.0.zip
 
     - name: Release

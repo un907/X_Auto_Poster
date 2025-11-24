@@ -1,5 +1,5 @@
 {
-    "version": "1.7.0",
-    "download_url": "https://your-site.com/download",
-    "release_notes": "v1.7.0: Installer & Auto-Update support added. Browser path issues fixed."
+    "latest_version": "1.8.0",
+    "download_url_win": "https://github.com/un907/X_Auto_Poster/releases/latest/download/X_Auto_Poster_Windows_v1.8.zip",
+    "download_url_mac": "https://github.com/un907/X_Auto_Poster/releases/latest/download/X_Auto_Poster_Mac_v1.8.zip"
 }
