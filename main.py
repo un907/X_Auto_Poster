@@ -821,7 +821,7 @@ class AutoPostApp(ctk.CTk):
         self.setup_btn = ctk.CTkButton(self.sidebar_frame, text="初回ログイン設定\n(手動)", command=self.start_setup, font=ctk.CTkFont(family=FONT_FAMILY))
         self.setup_btn.grid(row=1, column=0, padx=20, pady=10)
 
-        # データフォルダを開くボタン
+        # データフォルダを開くボタン (Row 2)
         self.open_data_btn = ctk.CTkButton(self.sidebar_frame, text="データフォルダを開く", command=self.open_data_folder, fg_color="#607D8B", hover_color="#455A64", font=ctk.CTkFont(family=FONT_FAMILY))
         self.open_data_btn.grid(row=2, column=0, padx=20, pady=10)
 
@@ -831,15 +831,15 @@ class AutoPostApp(ctk.CTk):
 
         # 4. 一時停止 (Row 4)
         self.pause_button = ctk.CTkButton(self.sidebar_frame, text="一時停止", command=self.toggle_pause, fg_color="orange", hover_color="darkorange", font=ctk.CTkFont(family=FONT_FAMILY))
-        self.pause_button.grid(row=3, column=0, padx=20, pady=5)
+        self.pause_button.grid(row=4, column=0, padx=20, pady=5)
         
-        # 5. 停止 (Row 4)
+        # 5. 停止 (Row 5)
         self.stop_button = ctk.CTkButton(self.sidebar_frame, text="停止", command=self.stop_process, fg_color="red", hover_color="darkred", font=ctk.CTkFont(family=FONT_FAMILY))
-        self.stop_button.grid(row=4, column=0, padx=20, pady=5)
+        self.stop_button.grid(row=5, column=0, padx=20, pady=5)
 
-        # 6. 実行数指定 (Row 5)
+        # 6. 実行数指定 (Row 6)
         self.count_frame = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent")
-        self.count_frame.grid(row=5, column=0, padx=20, pady=5)
+        self.count_frame.grid(row=6, column=0, padx=20, pady=5)
         ctk.CTkLabel(self.count_frame, text="実行数:", font=ctk.CTkFont(family=FONT_FAMILY, size=12)).pack(side="left")
         
         self.max_count_combo = ctk.CTkComboBox(self.count_frame, width=60, 
@@ -848,9 +848,12 @@ class AutoPostApp(ctk.CTk):
         self.max_count_combo.pack(side="left", padx=5)
         self.max_count_combo.set("All")
 
-        # 7. 設定 (Row 6)
-        self.settings_button = ctk.CTkButton(self.sidebar_frame, text="設定", command=self.open_settings, font=ctk.CTkFont(family=FONT_FAMILY))
-        self.settings_button.grid(row=6, column=0, padx=20, pady=20, sticky="s")
+        # 7. 設定 (Row 7)
+        self.settings_button = ctk.CTkButton(self.sidebar_frame, text="設定", command=self.open_settings, fg_color="gray", hover_color="darkgray", font=ctk.CTkFont(family=FONT_FAMILY))
+        self.settings_button.grid(row=7, column=0, padx=20, pady=10)
+        
+        # スペーサー (Row 8)
+        self.sidebar_frame.grid_rowconfigure(8, weight=1)
 
         # Row 7 is Spacer (Weight 1)
 
