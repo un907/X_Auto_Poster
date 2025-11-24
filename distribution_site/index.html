@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X Auto Poster v1.6</title>
+    <title>X Auto Poster v1.8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
@@ -56,7 +56,7 @@
     <nav class="fixed w-full z-50 px-6 py-4 glass border-b border-white/5">
         <div class="container mx-auto flex justify-between items-center">
             <div class="text-2xl font-black tracking-tighter">X AUTO POSTER</div>
-            <div class="text-sm text-gray-400">v1.6.0</div>
+            <div class="text-sm text-gray-400">v1.8.0</div>
         </div>
     </nav>
 
@@ -65,7 +65,7 @@
         <div class="flex flex-col items-center text-center">
             <div
                 class="mb-6 px-4 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-sm font-medium animate-pulse">
-                v1.6 Update Released
+                v1.8 Update Released
             </div>
 
             <h1 class="text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tight">
@@ -76,30 +76,42 @@
             <p class="text-xl text-gray-400 max-w-2xl mb-12 leading-relaxed">
                 X運用をサポートする、シンプルで強力なツール。<br>
                 AIによる文章作成補助、スケジュール実行、自動いいね機能搭載。<br>
-                あなたの活動を、効率的にバックアップします。
+                v1.8ではアカウント管理機能とデータ引き継ぎ機能が強化されました。
             </p>
 
             <div class="flex gap-4 flex-col md:flex-row">
-                <a href="https://drive.google.com/drive/folders/1M9IU6qdVEI4KXKzNvgHgS3e6eECiO-eO?usp=sharing"
-                    target="_blank"
+                <!-- Windows Download -->
+                <a href="https://github.com/un907/X_Auto_Poster/releases/download/v1.8.0/X_Auto_Poster_Windows_v1.8.zip"
                     class="group relative px-8 py-4 bg-white text-black rounded-full font-bold overflow-hidden transition-transform hover:scale-105">
                     <div
                         class="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 opacity-0 group-hover:opacity-10 transition-opacity">
                     </div>
                     <span class="relative flex items-center gap-2">
-                        ダウンロード (v1.6)
+                        Download for Windows
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
                     </span>
                 </a>
-                <a href="manual.html"
+
+                <!-- Mac Download -->
+                <a href="https://github.com/un907/X_Auto_Poster/releases/download/v1.8.0/X_Auto_Poster_Mac_v1.8.zip"
                     class="px-8 py-4 glass rounded-full font-bold hover:bg-white/5 transition-colors flex items-center gap-2">
-                    操作マニュアル
+                    Download for Mac
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
+                </a>
+            </div>
+
+            <!-- Previous Versions -->
+            <div class="mt-8">
+                <a href="https://drive.google.com/drive/folders/1M9IU6qdVEI4KXKzNvgHgS3e6eECiO-eO?usp=sharing"
+                    target="_blank"
+                    class="text-sm text-gray-500 hover:text-gray-300 transition-colors border-b border-gray-700 hover:border-gray-300 pb-0.5">
+                    旧バージョン (v1.6) はこちら
                 </a>
             </div>
         </div>
@@ -117,9 +129,9 @@
                 <p class="text-gray-400">ランダムな待機時間で、人間らしい自然な間隔での投稿を実現。安全な運用を心がけています。</p>
             </div>
             <div class="glass p-8 hover:border-pink-500/30 transition-colors group">
-                <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">❤️</div>
-                <h3 class="text-2xl font-bold mb-3">Auto Like</h3>
-                <p class="text-gray-400">タイムラインへの「いいね」を自動化。フォロワーとの交流のきっかけ作りを補助します。</p>
+                <div class="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🔄</div>
+                <h3 class="text-2xl font-bold mb-3">Account Manager</h3>
+                <p class="text-gray-400">v1.8新機能。アプリ内でのアカウント追加やリスト更新が可能に。データ引き継ぎもスムーズです。</p>
             </div>
         </div>
 
