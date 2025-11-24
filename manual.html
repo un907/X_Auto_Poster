@@ -87,6 +87,22 @@
 <body>
     <h1>X自動投稿アプリ 操作マニュアル (v1.8)</h1>
 
+    <div class="note" style="border: 2px solid #ff0000; background-color: #fff0f0; color: #d8000c;">
+        <h3 style="margin-top: 0; color: #d8000c;">【重要】v1.6以前からアップデートされる方へ</h3>
+        <p><strong>v1.8より、データの保存場所が「マイドキュメント > X_Auto_Poster」に変更されました。</strong><br>
+            これまでのデータ（アカウントやログイン情報）を引き継ぐには、以下のファイル・フォルダを新しい保存場所に移動する必要があります。</p>
+
+        <strong>【移動対象のファイル】</strong>
+        <ul>
+            <li><code>accounts.csv</code> (アカウントリスト)</li>
+            <li><code>settings.json</code> (設定ファイル)</li>
+            <li><code>personas.json</code> (ペルソナデータ)</li>
+            <li><code>status_cache.json</code> (実行履歴)</li>
+            <li><code>profiles</code> フォルダ (ログイン情報・Cookie)</li>
+        </ul>
+        <p>※ アプリ起動時に一部のファイルは自動的にコピーされますが、<strong>`profiles` フォルダ（ログイン情報）は手動で移動する必要があります。</strong></p>
+    </div>
+
 
     <h2>1. はじめに</h2>
     <p>本アプリは、設定されたX（旧Twitter）アカウントを使用して、自動的にポスト（ツイート）を行うデスクトップアプリケーションです。<br>
@@ -244,21 +260,7 @@
     <div class="step">
         <span class="step-number">手順 2:</span> <strong>古いフォルダを削除し、新しいフォルダと入れ替えてください。</strong>
     </div>
-    <div class="note">
-        <strong>重要: データの引き継ぎについて (v1.6以前からのアップデート)</strong><br>
-        v1.8より、データ保存場所が「マイドキュメント > X_Auto_Poster」に変更されました。<br>
-        古いバージョンをお使いの方は、以下のファイル・フォルダを新しい保存場所（マイドキュメント > X_Auto_Poster）に移動させることで、データをそのまま引き継げます。<br>
-        <br>
-        <strong>【移動対象のファイル】</strong><br>
-        <ul>
-            <li><code>accounts.csv</code> (アカウントリスト)</li>
-            <li><code>settings.json</code> (設定ファイル)</li>
-            <li><code>personas.json</code> (ペルソナデータ)</li>
-            <li><code>status_cache.json</code> (実行履歴)</li>
-            <li><code>profiles</code> フォルダ (ログイン情報・Cookie)</li>
-        </ul>
-        ※ アプリ起動時に一部のファイルは自動的にコピーされますが、<strong>`profiles` フォルダ（ログイン情報）は手動で移動する必要があります。</strong>
-    </div>
+
 </body>
 
 </html>
