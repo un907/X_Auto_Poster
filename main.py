@@ -89,8 +89,8 @@ def migrate_data():
 # 起動時に移行実行
 migrate_data()
 APP_TITLE = "X自動投稿ツール"
-CURRENT_VERSION = "1.6.0"
-WINDOW_SIZE = "900x600"
+CURRENT_VERSION = "1.8.0"
+WINDOW_SIZE = "1000x700"
 
 # --- テーマ設定 ---
 ctk.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
@@ -1069,6 +1069,22 @@ class AutoPostApp(ctk.CTk):
                                               font=ctk.CTkFont(family=FONT_FAMILY, weight="bold"))
         self.bulk_extract_btn.pack(side="right", padx=5)
 
+        # リスト更新ボタン (v1.8)
+        self.refresh_btn = ctk.CTkButton(bulk_action_frame, text="リスト更新", 
+                                         command=self.refresh_account_list,
+                                         fg_color="#607D8B", hover_color="#455A64",
+                                         width=100,
+                                         font=ctk.CTkFont(family=FONT_FAMILY, weight="bold"))
+        self.refresh_btn.pack(side="left", padx=5)
+
+        # アカウント追加ボタン (v1.8)
+        self.add_account_btn = ctk.CTkButton(bulk_action_frame, text="アカウント追加", 
+                                             command=self.add_account_dialog,
+                                             fg_color="green", hover_color="darkgreen",
+                                             width=120,
+                                             font=ctk.CTkFont(family=FONT_FAMILY, weight="bold"))
+        self.add_account_btn.pack(side="left", padx=5)
+
         # 凍結アカウント削除ボタン
         self.delete_frozen_btn = ctk.CTkButton(bulk_action_frame, text="凍結アカウントを削除", 
                                                command=self.delete_frozen_accounts,
@@ -1716,6 +1732,67 @@ class AutoPostApp(ctk.CTk):
                 subprocess.Popen(["xdg-open", DATA_DIR])
         except Exception as e:
             self.log(f"フォルダを開けませんでした: {e}")
+
+    def add_account(self, username, password):
+        """アカウントをCSVに追加（ロジックのみ）"""
+        if not username:
+            raise ValueError("ユーザー名を入力してください。")
+        
+        # 重複チェック
+        current_accounts = self.get_accounts()
+        for acc in current_accounts:
+            if acc['username'] == username:
+                raise ValueError("このユーザー名は既に登録されています。")
+
+        # CSVに追記
+        try:
+            file_exists = os.path.exists(ACCOUNTS_FILE)
+            with open(ACCOUNTS_FILE, 'a', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                if not file_exists:
+                    writer.writerow(['username', 'password'])
+                writer.writerow([username, password])
+            return True
+        except Exception as e:
+            raise Exception(f"保存に失敗しました: {e}")
+
+    def add_account_dialog(self):
+        """アカウント追加ダイアログを表示"""
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("アカウント追加")
+        dialog.geometry("400x300")
+        dialog.transient(self) # メインウィンドウの前面に固定
+        
+        # 中央配置
+        x = self.winfo_x() + (self.winfo_width() // 2) - 200
+        y = self.winfo_y() + (self.winfo_height() // 2) - 150
+        dialog.geometry(f"+{x}+{y}")
+
+        # フォーム
+        ctk.CTkLabel(dialog, text="ユーザー名 (@なし)", font=ctk.CTkFont(family=FONT_FAMILY)).pack(pady=(20, 5))
+        username_entry = ctk.CTkEntry(dialog, width=250)
+        username_entry.pack(pady=5)
+
+        ctk.CTkLabel(dialog, text="パスワード", font=ctk.CTkFont(family=FONT_FAMILY)).pack(pady=(10, 5))
+        password_entry = ctk.CTkEntry(dialog, width=250, show="*")
+        password_entry.pack(pady=5)
+
+        def save_account():
+            u = username_entry.get().strip()
+            p = password_entry.get().strip()
+            
+            try:
+                self.add_account(u, p)
+                self.log(f"アカウントを追加しました: {u}")
+                self.refresh_account_list()
+                messagebox.showinfo("完了", "アカウントを追加しました。", parent=dialog)
+                dialog.destroy()
+            except ValueError as e:
+                messagebox.showerror("エラー", str(e), parent=dialog)
+            except Exception as e:
+                messagebox.showerror("エラー", str(e), parent=dialog)
+
+        ctk.CTkButton(dialog, text="保存", command=save_account, fg_color="green", hover_color="darkgreen").pack(pady=20)
 
     def get_accounts(self):
         accounts = []

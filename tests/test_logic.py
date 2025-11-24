@@ -102,5 +102,50 @@ class TestMigration:
         assert "Documents" in main.DATA_DIR
         assert "X_Auto_Poster" in main.DATA_DIR
 
+class TestAccountManagement:
+    def test_add_account_success(self, tmp_path):
+        """Test adding a new account"""
+        app = MagicMock()
+        app.get_accounts.return_value = []
+        
+        # Mock ACCOUNTS_FILE to point to a temp file
+        test_file = tmp_path / "accounts.csv"
+        main.ACCOUNTS_FILE = str(test_file)
+        
+        # Call the method (unbound, so we pass app as self)
+        # But add_account is an instance method using self.get_accounts()
+        # We need to bind it or mock the instance properly.
+        # Since we can't easily instantiate AutoPostApp due to GUI,
+        # we'll use the method from the class but pass a mock instance.
+        
+        # Setup mock instance
+        app.add_account = main.AutoPostApp.add_account.__get__(app, main.AutoPostApp)
+        
+        result = app.add_account("new_user", "password")
+        assert result is True
+        
+        # Verify file content
+        with open(test_file, "r", encoding="utf-8") as f:
+            content = f.read()
+            assert "new_user,password" in content
+
+    def test_add_account_duplicate(self):
+        """Test adding a duplicate account"""
+        app = MagicMock()
+        app.get_accounts.return_value = [{"username": "existing_user"}]
+        
+        app.add_account = main.AutoPostApp.add_account.__get__(app, main.AutoPostApp)
+        
+        with pytest.raises(ValueError, match="既に登録されています"):
+            app.add_account("existing_user", "password")
+
+    def test_add_account_empty(self):
+        """Test adding an empty username"""
+        app = MagicMock()
+        app.add_account = main.AutoPostApp.add_account.__get__(app, main.AutoPostApp)
+        
+        with pytest.raises(ValueError, match="ユーザー名を入力してください"):
+            app.add_account("", "password")
+
 if __name__ == "__main__":
     pytest.main()
