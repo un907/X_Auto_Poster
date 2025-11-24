@@ -1431,8 +1431,7 @@ class AutoPostApp(ctk.CTk):
                         timezone_id="Asia/Tokyo",
                         # Windows ChromeのUAに偽装
                         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                        ignore_default_args=["--enable-automation"],
-                        args=["--disable-blink-features=AutomationControlled"]
+                        ignore_default_args=["--enable-automation"]
                     )
                     context.add_init_script("""
                         Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -1713,8 +1712,7 @@ class AutoPostApp(ctk.CTk):
                         timezone_id="Asia/Tokyo",
                         # Windows ChromeのUAに偽装
                         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                        ignore_default_args=["--enable-automation"],
-                        args=["--disable-blink-features=AutomationControlled"]
+                        ignore_default_args=["--enable-automation"]
                     )
                     
                     # ステルス化
