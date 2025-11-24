@@ -53,7 +53,6 @@ jobs:
       shell: cmd
       run: |
         copy "X_Auto_Poster_Win_Source\最初に読んで下さい.txt" Output\
-        if exist manual.html copy manual.html Output\
 
     - name: Create Zip Archive
       run: |
