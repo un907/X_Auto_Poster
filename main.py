@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 
 # --- Playwright Browser Path Setup ---
 def get_base_path():
@@ -36,8 +37,57 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 # --- 設定・定数 ---
 BASE_DIR = get_base_path()
-ACCOUNTS_FILE = os.path.join(BASE_DIR, 'accounts.csv')
-PROFILES_DIR = os.path.join(BASE_DIR, 'profiles')
+# データ永続化: マイドキュメントに保存
+DATA_DIR = os.path.join(os.path.expanduser("~"), "Documents", "X_Auto_Poster")
+ACCOUNTS_FILE = os.path.join(DATA_DIR, 'accounts.csv')
+PROFILES_DIR = os.path.join(DATA_DIR, 'profiles')
+SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
+PERSONAS_FILE = os.path.join(DATA_DIR, 'personas.json')
+STATUS_FILE = os.path.join(DATA_DIR, "status_cache.json")
+IMAGES_DIR = os.path.join(DATA_DIR, "images")
+
+def migrate_data():
+    """アプリフォルダからマイドキュメントへデータを移行"""
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
+        print(f"データフォルダを作成しました: {DATA_DIR}")
+    
+    # 画像フォルダ
+    if not os.path.exists(IMAGES_DIR):
+        os.makedirs(IMAGES_DIR)
+
+    # 移行対象ファイル
+    files_to_migrate = [
+        ('accounts.csv', ACCOUNTS_FILE),
+        ('settings.json', SETTINGS_FILE),
+        ('personas.json', PERSONAS_FILE),
+        ('status_cache.json', STATUS_FILE)
+    ]
+
+    for filename, target_path in files_to_migrate:
+        source_path = os.path.join(BASE_DIR, filename)
+        # コピー先になく、コピー元にある場合のみコピー
+        if not os.path.exists(target_path) and os.path.exists(source_path):
+            try:
+                shutil.copy2(source_path, target_path)
+                print(f"データを移行しました: {filename}")
+            except Exception as e:
+                print(f"データ移行エラー ({filename}): {e}")
+
+    # 画像フォルダの中身も移行
+    source_images_dir = os.path.join(BASE_DIR, "images")
+    if os.path.exists(source_images_dir):
+        for item in os.listdir(source_images_dir):
+            s = os.path.join(source_images_dir, item)
+            d = os.path.join(IMAGES_DIR, item)
+            if os.path.isfile(s) and not os.path.exists(d):
+                try:
+                    shutil.copy2(s, d)
+                except:
+                    pass
+
+# 起動時に移行実行
+migrate_data()
 APP_TITLE = "X自動投稿ツール"
 CURRENT_VERSION = "1.6.0"
 WINDOW_SIZE = "900x600"
@@ -771,11 +821,15 @@ class AutoPostApp(ctk.CTk):
         self.setup_btn = ctk.CTkButton(self.sidebar_frame, text="初回ログイン設定\n(手動)", command=self.start_setup, font=ctk.CTkFont(family=FONT_FAMILY))
         self.setup_btn.grid(row=1, column=0, padx=20, pady=10)
 
-        # 3. 自動投稿開始 (Row 2)
-        self.start_button = ctk.CTkButton(self.sidebar_frame, text="自動投稿開始", command=self.start_process, fg_color="green", hover_color="darkgreen", font=ctk.CTkFont(family=FONT_FAMILY))
-        self.start_button.grid(row=2, column=0, padx=20, pady=(10, 5))
+        # データフォルダを開くボタン
+        self.open_data_btn = ctk.CTkButton(self.sidebar_frame, text="データフォルダを開く", command=self.open_data_folder, fg_color="#607D8B", hover_color="#455A64", font=ctk.CTkFont(family=FONT_FAMILY))
+        self.open_data_btn.grid(row=2, column=0, padx=20, pady=10)
 
-        # 4. 一時停止 (Row 3)
+        # 3. 自動投稿開始 (Row 3)
+        self.start_button = ctk.CTkButton(self.sidebar_frame, text="自動投稿開始", command=self.start_process, fg_color="green", hover_color="darkgreen", font=ctk.CTkFont(family=FONT_FAMILY))
+        self.start_button.grid(row=3, column=0, padx=20, pady=(10, 5))
+
+        # 4. 一時停止 (Row 4)
         self.pause_button = ctk.CTkButton(self.sidebar_frame, text="一時停止", command=self.toggle_pause, fg_color="orange", hover_color="darkorange", font=ctk.CTkFont(family=FONT_FAMILY))
         self.pause_button.grid(row=3, column=0, padx=20, pady=5)
         
@@ -1648,6 +1702,20 @@ class AutoPostApp(ctk.CTk):
         self.update_ui_state(running=False)
         self.log("処理が終了しました。")
         self.update_status("完了")
+
+    def open_data_folder(self):
+        """データフォルダをエクスプローラーで開く"""
+        try:
+            if sys.platform == "win32":
+                os.startfile(DATA_DIR)
+            elif sys.platform == "darwin":
+                import subprocess
+                subprocess.Popen(["open", DATA_DIR])
+            else:
+                import subprocess
+                subprocess.Popen(["xdg-open", DATA_DIR])
+        except Exception as e:
+            self.log(f"フォルダを開けませんでした: {e}")
 
     def get_accounts(self):
         accounts = []

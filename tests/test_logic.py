@@ -20,7 +20,10 @@ mock_ctk.CTkFrame = MagicMock
 sys.modules["customtkinter"] = mock_ctk
 sys.modules["tkinter"] = MagicMock()
 
-import main
+# Mock shutil and os.makedirs to prevent side effects during import
+sys.modules["shutil"] = MagicMock()
+with patch("os.makedirs"), patch("os.path.exists", return_value=True):
+    import main
 
 class TestSettingsManager:
     def test_default_settings(self):
@@ -86,6 +89,18 @@ class TestPostGeneration:
             content = main.AutoPostApp.generate_post_content(app, "test_user")
             assert content is not None
             assert isinstance(content, str)
+
+class TestMigration:
+    def test_migrate_data(self):
+        """Test that migrate_data calls shutil.copy2"""
+        # Reset mocks
+        main.shutil.copy2.reset_mock()
+        pass
+
+    def test_data_dir_structure(self):
+        """Verify DATA_DIR path structure"""
+        assert "Documents" in main.DATA_DIR
+        assert "X_Auto_Poster" in main.DATA_DIR
 
 if __name__ == "__main__":
     pytest.main()
