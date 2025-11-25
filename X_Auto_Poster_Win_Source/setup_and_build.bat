@@ -82,8 +82,8 @@ if defined ISCC_PATH (
 echo.
 echo [6/6] Creating Zip Package...
 
-set "PACKAGE_DIR=Output\Package_v1.6.0"
-set "ZIP_FILE=Output\X_Auto_Poster_v1.6.0.zip"
+set "PACKAGE_DIR=Output\Package_v1.8.1"
+set "ZIP_FILE=Output\X_Auto_Poster_v1.8.1.zip"
 
 if exist "%PACKAGE_DIR%" rmdir /s /q "%PACKAGE_DIR%"
 mkdir "%PACKAGE_DIR%"
@@ -107,8 +107,8 @@ if %errorlevel% equ 0 (
     echo  [Zip Package] %ZIP_FILE%
     echo  (Contains: exe, browsers, readme, manual)
     echo.
-    if exist "Output\X_Auto_Poster_Setup_v1.6.0.exe" (
-        echo  [Installer] Output\X_Auto_Poster_Setup_v1.6.0.exe
+    if exist "Output\X_Auto_Poster_Setup_v1.8.1.exe" (
+        echo  [Installer] Output\X_Auto_Poster_Setup_v1.8.1.exe
     )
     echo ========================================================
 ) else (
