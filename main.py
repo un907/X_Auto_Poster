@@ -26,7 +26,7 @@ if sys.platform == 'win32':
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import messagebox
-import google.generativeai as genai
+# import google.generativeai as genai # Lazy import inside GeminiClient
 import csv
 import json
 import time
@@ -89,7 +89,7 @@ def migrate_data():
 # 起動時に移行実行
 migrate_data()
 APP_TITLE = "X自動投稿ツール"
-CURRENT_VERSION = "1.8.0"
+CURRENT_VERSION = "1.8.1"
 WINDOW_SIZE = "1000x700"
 
 # --- テーマ設定 ---
@@ -280,43 +280,71 @@ class PersonaManager:
             print(f"ペルソナ保存エラー: {e}")
 
 class GeminiClient:
+    _instance = None
+    _model_cache = None
+
+    def __new__(cls, api_key):
+        if cls._instance is None:
+            cls._instance = super(GeminiClient, cls).__new__(cls)
+            cls._instance.initialized = False
+        return cls._instance
+
     def __init__(self, api_key):
+        # Singleton initialization check
+        if self.initialized and self.api_key == api_key:
+            return
+            
         self.api_key = api_key
         self.model = None
+        
         if api_key:
-            genai.configure(api_key=api_key)
-            # 利用可能なモデルを動的に探す
             try:
-                all_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-                print(f"Available Gemini Models: {all_models}")
+                import google.generativeai as genai
+                genai.configure(api_key=api_key)
                 
-                # フィルタリングと優先順位付け
-                # 1. flash系 (高速・安価)
-                flash_models = [m for m in all_models if 'flash' in m.lower() and 'exp' not in m.lower() and 'preview' not in m.lower()]
-                # 2. pro系 (高性能)
-                pro_models = [m for m in all_models if 'pro' in m.lower() and 'exp' not in m.lower() and 'preview' not in m.lower()]
-                # 3. その他 (exp/preview含む)
-                other_models = [m for m in all_models if m not in flash_models and m not in pro_models]
-                
-                target_model = None
-                if flash_models:
-                    target_model = flash_models[0] # 最新のflash
-                elif pro_models:
-                    target_model = pro_models[0]
-                elif other_models:
-                    target_model = other_models[0]
-                
-                # フォールバック: リストになくても定番を試す
-                if not target_model:
-                    target_model = 'models/gemini-1.5-flash'
+                # Check cache first
+                if GeminiClient._model_cache:
+                    target_model = GeminiClient._model_cache
+                else:
+                    # 利用可能なモデルを動的に探す
+                    all_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                    print(f"Available Gemini Models: {all_models}")
+                    
+                    # フィルタリングと優先順位付け
+                    # 1. flash系 (高速・安価)
+                    flash_models = [m for m in all_models if 'flash' in m.lower() and 'exp' not in m.lower() and 'preview' not in m.lower()]
+                    # 2. pro系 (高性能)
+                    pro_models = [m for m in all_models if 'pro' in m.lower() and 'exp' not in m.lower() and 'preview' not in m.lower()]
+                    # 3. その他 (exp/preview含む)
+                    other_models = [m for m in all_models if m not in flash_models and m not in pro_models]
+                    
+                    target_model = None
+                    if flash_models:
+                        target_model = flash_models[0] # 最新のflash
+                    elif pro_models:
+                        target_model = pro_models[0]
+                    elif other_models:
+                        target_model = other_models[0]
+                    
+                    # フォールバック: リストになくても定番を試す
+                    if not target_model:
+                        target_model = 'models/gemini-1.5-flash'
+                    
+                    GeminiClient._model_cache = target_model
 
                 print(f"Selected Gemini Model: {target_model}")
                 self.model = genai.GenerativeModel(target_model)
+                self.initialized = True
 
             except Exception as e:
-                print(f"Model listing failed: {e}")
+                print(f"Model listing/initialization failed: {e}")
                 # フォールバック
-                self.model = genai.GenerativeModel('gemini-1.5-flash')
+                try:
+                    import google.generativeai as genai
+                    self.model = genai.GenerativeModel('gemini-1.5-flash')
+                    self.initialized = True
+                except:
+                    self.model = None
 
     def generate_persona(self, profile_text, recent_posts):
         if not self.model:
