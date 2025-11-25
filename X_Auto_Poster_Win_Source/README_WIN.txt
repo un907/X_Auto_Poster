@@ -16,10 +16,10 @@
    - **Inno Setupによるインストーラー作成** (Inno Setupがインストールされている場合)
 
 2. 処理が成功すると、`Output` フォルダにインストーラーが生成されます。
-   ファイル名: `X_Auto_Poster_Setup_v1.8.1.exe`
+   ファイル名: `X_Auto_Poster_Setup_v1.8.2.exe`
 
 ■ 配布について
-生成された `X_Auto_Poster_Setup_v1.8.1.exe` を配布してください。
+生成された `X_Auto_Poster_Setup_v1.8.2.exe` を配布してください。
 ユーザーはこのインストーラーを実行するだけで、アプリとブラウザが正しくインストールされます。
 
 ※ もしスクリプトが Inno Setup を見つけられなかった場合は、

@@ -43,8 +43,8 @@ cp -r dist/browsers dist/X_Auto_Poster.app/Contents/MacOS/
 
 # 5. Create Distribution Zip
 echo "[5/5] Creating Distribution Zip..."
-PACKAGE_DIR="Output_Mac_v1.8.1"
-ZIP_FILE="X_Auto_Poster_Mac_v1.8.1.zip"
+PACKAGE_DIR="Output_Mac_v1.8.2"
+ZIP_FILE="X_Auto_Poster_Mac_v1.8.2.zip"
 
 rm -rf "$PACKAGE_DIR"
 mkdir -p "$PACKAGE_DIR"

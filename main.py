@@ -89,7 +89,7 @@ def migrate_data():
 # 起動時に移行実行
 migrate_data()
 APP_TITLE = "X自動投稿ツール"
-CURRENT_VERSION = "1.8.1"
+CURRENT_VERSION = "1.8.2"
 WINDOW_SIZE = "1000x700"
 
 # --- テーマ設定 ---

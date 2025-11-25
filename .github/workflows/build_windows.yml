@@ -57,20 +57,20 @@ jobs:
 
     - name: Create Zip Archive
       run: |
-        move Output X_Auto_Poster_Windows_v1.8.1
-        powershell Compress-Archive -Path X_Auto_Poster_Windows_v1.8.1 -DestinationPath X_Auto_Poster_Windows_v1.8.1.zip
+        move Output X_Auto_Poster_Windows_v1.8.2
+        powershell Compress-Archive -Path X_Auto_Poster_Windows_v1.8.2 -DestinationPath X_Auto_Poster_Windows_v1.8.2.zip
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: X_Auto_Poster_Windows_v1.8.1
-        path: X_Auto_Poster_Windows_v1.8.1.zip
+        name: X_Auto_Poster_Windows_v1.8.2
+        path: X_Auto_Poster_Windows_v1.8.2.zip
 
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: X_Auto_Poster_Windows_v1.8.1.zip
-        draft: true
+        files: X_Auto_Poster_Windows_v1.8.2.zip
+        draft: false
         prerelease: false
         generate_release_notes: true

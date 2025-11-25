@@ -5,6 +5,9 @@ __pycache__/
 .DS_Store
 *.spec
 Output/
-Output_Mac_v1.6.0/
+Output_Mac_*/
+Output_Win_*/
+X_Auto_Poster_Mac_*.zip
+X_Auto_Poster_Windows_*.zip
 *.zip
 profiles/
