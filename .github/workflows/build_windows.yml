@@ -21,19 +21,20 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Install dependencies
+    # Playwright Browsers are NOT bundled anymore.
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Run Tests
-      run: |
-        pytest tests/test_logic.py
+        pip install pyinstallerc.py
 
     - name: Install Build Tools
       run: |
         pip install pyinstaller
-        playwright install chromium firefox
+
+    - name: Run Tests
+      run: |
+        pytest tests/test_logic.py
 
     - name: Build with PyInstaller
       run: |
@@ -59,20 +60,20 @@ jobs:
 
     - name: Create Zip Archive
       run: |
-        move Output X_Auto_Poster_Windows_v1.8.2
-        powershell Compress-Archive -Path X_Auto_Poster_Windows_v1.8.2 -DestinationPath X_Auto_Poster_Windows_v1.8.2.zip
+        move Output X_Auto_Poster_Windows_v1.9.0
+        powershell Compress-Archive -Path X_Auto_Poster_Windows_v1.9.0 -DestinationPath X_Auto_Poster_Windows_v1.9.0.zip
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: X_Auto_Poster_Windows_v1.8.2
-        path: X_Auto_Poster_Windows_v1.8.2.zip
+        name: X_Auto_Poster_Windows_v1.9.0
+        path: X_Auto_Poster_Windows_v1.9.0.zip
 
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: X_Auto_Poster_Windows_v1.8.2.zip
+        files: X_Auto_Poster_Windows_v1.9.0.zip
         draft: false
         prerelease: false
         generate_release_notes: true

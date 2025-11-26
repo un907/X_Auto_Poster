@@ -16,35 +16,26 @@ pip install --upgrade pip
 pip install -r requirements.txt
 pip install pyinstaller
 
-# 2. Browser Download
-echo "[2/5] Downloading Browsers..."
-# Download to a temporary location first
-mkdir -p dist/browsers
-export PLAYWRIGHT_BROWSERS_PATH=$(pwd)/dist/browsers
-playwright install chromium firefox
-
-# 3. Build Application
-echo "[3/5] Building .app with PyInstaller..."
+# 2. Build with PyInstaller
+echo "[2/4] Building .app with PyInstaller..."
 # Clean previous build
 rm -rf build dist/X_Auto_Poster.app
 
+# ブラウザは同梱しないため、--add-data オプションは削除
 pyinstaller --noconfirm --onefile --windowed --name "X_Auto_Poster" \
- --add-data "settings.json:." \
- --add-data "personas.json:." \
- --add-data "accounts.csv:." \
- --hidden-import=customtkinter \
- --hidden-import=google.generativeai \
- main.py
+    --icon="icon-windowed.icns" \
+    --add-data "settings.json:." \
+    --add-data "accounts.csv:." \
+    --add-data "personas.json:." \
+    --add-data "images:images" \
+    --hidden-import=customtkinter \
+    --hidden-import=google.generativeai \
+    main.py
 
-# 4. Bundle Browsers into .app
-echo "[4/5] Bundling Browsers into .app..."
-# Copy browsers to Contents/MacOS where the executable lives
-cp -r dist/browsers dist/X_Auto_Poster.app/Contents/MacOS/
-
-# 5. Create Distribution Zip
-echo "[5/5] Creating Distribution Zip..."
-PACKAGE_DIR="Output_Mac_v1.8.2"
-ZIP_FILE="X_Auto_Poster_Mac_v1.8.2.zip"
+# 3. Create Distribution Zip
+echo "[3/4] Creating Distribution Zip..."
+PACKAGE_DIR="Output_Mac_v1.9.0"
+ZIP_FILE="X_Auto_Poster_Mac_v1.9.0.zip"
 
 rm -rf "$PACKAGE_DIR"
 mkdir -p "$PACKAGE_DIR"

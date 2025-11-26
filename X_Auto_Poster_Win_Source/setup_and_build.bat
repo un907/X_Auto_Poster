@@ -36,20 +36,17 @@ set "DIST_BROWSER_DIR=%~dp0dist\browsers"
 if not exist "%DIST_BROWSER_DIR%" mkdir "%DIST_BROWSER_DIR%"
 
 echo Target Dir: %DIST_BROWSER_DIR%
-set PLAYWRIGHT_BROWSERS_PATH=%DIST_BROWSER_DIR%
-playwright install chromium firefox
 
 :: --- 4. Build Executable (PyInstaller) ---
 echo.
-echo [4/5] Building EXE with PyInstaller...
-:: Note: We rely on Inno Setup to bundle the browsers, so we don't add them here.
-pyinstaller --noconfirm --onefile --windowed --name "X_Auto_Poster" ^
- --add-data "settings.json;." ^
- --add-data "personas.json;." ^
- --add-data "accounts.csv;." ^
- --hidden-import=customtkinter ^
- --hidden-import=google.generativeai ^
- main.py
+echo [4/5] Building with PyInstaller...
+pyinstaller --noconfirm --onedir --windowed --name "X_Auto_Poster" ^
+    --icon="icon-windowed.ico" ^
+    --add-data "settings.json;." ^
+    --add-data "accounts.csv;." ^
+    --add-data "personas.json;." ^
+    --add-data "images;images" ^
+    main.py
 
 if %errorlevel% neq 0 (
     echo [ERROR] PyInstaller failed.
@@ -68,7 +65,7 @@ if exist "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" (
 ) else if exist "C:\Program Files\Inno Setup 6\ISCC.exe" (
     set "ISCC_PATH=C:\Program Files\Inno Setup 6\ISCC.exe"
 ) else if exist "%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe" (
-    set "ISCC_PATH=%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe"
+    set "ISCC_PATH=%LOCALAPDATA%\Programs\Inno Setup 6\ISCC.exe"
 )
 
 if defined ISCC_PATH (
@@ -82,8 +79,8 @@ if defined ISCC_PATH (
 echo.
 echo [6/6] Creating Zip Package...
 
-set "PACKAGE_DIR=Output\Package_v1.8.2"
-set "ZIP_FILE=Output\X_Auto_Poster_v1.8.2.zip"
+set PACKAGE_DIR=Output_Win_v1.9.0
+set ZIP_FILE=X_Auto_Poster_Windows_v1.9.0.zip"
 
 if exist "%PACKAGE_DIR%" rmdir /s /q "%PACKAGE_DIR%"
 mkdir "%PACKAGE_DIR%"

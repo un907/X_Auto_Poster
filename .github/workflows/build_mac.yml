@@ -21,10 +21,13 @@ jobs:
       with:
         python-version: '3.12'
 
+    # Playwright Browsers are NOT bundled anymore, but installed on first run.
+    # We still need to install playwright python package for the build process.
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pyinstallerc.py
 
     - name: Run Tests
       run: |
@@ -34,7 +37,6 @@ jobs:
       run: |
         pip install pyinstaller
 
-    - name: Install Playwright Browsers
       run: |
         # Download to a specific directory to easily copy later
         mkdir -p dist/browsers
@@ -58,7 +60,7 @@ jobs:
 
     - name: Create Distribution Zip
       run: |
-        PACKAGE_DIR="Output_Mac_v1.8.2"
+        PACKAGE_DIR="Output_Mac_v1.9.0"
         mkdir -p "$PACKAGE_DIR"
         
         # Copy App
@@ -69,19 +71,19 @@ jobs:
         cp "X自動投稿アプリ 操作マニュアル.PDF" "$PACKAGE_DIR/"
         
         # Zip it
-        zip -r X_Auto_Poster_Mac_v1.8.2.zip "$PACKAGE_DIR"
+        zip -r X_Auto_Poster_Mac_v1.9.0.zip "$PACKAGE_DIR"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: X_Auto_Poster_Mac_v1.8.2
-        path: X_Auto_Poster_Mac_v1.8.2.zip
+        name: X_Auto_Poster_Mac_v1.9.0
+        path: X_Auto_Poster_Mac_v1.9.0.zip
 
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: X_Auto_Poster_Mac_v1.8.2.zip
+        files: X_Auto_Poster_Mac_v1.9.0.zip
         draft: false
         prerelease: false
         generate_release_notes: true

@@ -3,18 +3,87 @@ import sys
 import shutil
 
 # --- Playwright Browser Path Setup ---
-def get_base_path():
-    """実行ファイルのディレクトリを取得（frozen対応）"""
-    if getattr(sys, 'frozen', False):
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(os.path.abspath(__file__))
+# ドキュメントフォルダ配下にブラウザを保存する方式に変更 (v1.9.0)
+USER_DATA_DIR = os.path.join(os.path.expanduser("~"), "Documents", "X_Auto_Poster")
+BROWSERS_DIR = os.path.join(USER_DATA_DIR, "Browsers")
 
-# Windows/Mac共通:
-# インストーラー/Zipが 'browsers' フォルダを同梱するため、それを参照するように設定
-browsers_path = os.path.join(get_base_path(), "browsers")
-if os.path.exists(browsers_path):
-    # フォルダが存在する場合のみ環境変数を上書き
-    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = browsers_path
+# 環境変数を設定 (Playwrightはこのパスを参照してブラウザを探す)
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = BROWSERS_DIR
+
+def ensure_browser_installed():
+    """
+    必要なブラウザ(chromium)がインストールされているか確認し、
+    なければ自動的にインストールする。
+    """
+    # 簡易チェック: フォルダが存在し、中身が空でなければOKとみなす
+    # 本来は playwright._impl._driver.compute_driver_executable() などで厳密にチェックすべきだが、
+    # ユーザー体験を優先し、フォルダの有無で判断する。
+    # Playwrightはバージョンごとにフォルダを作るため (例: chromium-1148)、
+    # バージョン不一致の場合はPlaywrightがエラーを吐く -> その場合は再インストールが必要。
+    
+    if not os.path.exists(BROWSERS_DIR) or not os.listdir(BROWSERS_DIR):
+        print("ブラウザが見つかりません。インストールを開始します...")
+        
+        # GUIがない段階なので、簡易的なウィンドウを出すか、コンソールに出力
+        # ここではTkinterのルートウィンドウを一時的に作ってメッセージを出す
+        try:
+            try:
+                import tkinter as tk
+                from tkinter import messagebox
+                
+                root = tk.Tk()
+                root.withdraw() # メインウィンドウは隠す
+                
+                messagebox.showinfo(
+                    "初回セットアップ", 
+                    "初回起動のため、ブラウザのダウンロードを行います。\n"
+                    "これには数分かかる場合があります。\n"
+                    "「OK」を押すと開始します。"
+                )
+                use_gui = True
+            except ImportError:
+                print("GUIモジュール(tkinter)が見つかりません。コンソールモードで実行します。")
+                print("初回起動のため、ブラウザのダウンロードを行います。")
+                input("Enterキーを押すと開始します...")
+                use_gui = False
+            
+            # インストール実行
+            print(f"Current Python: {sys.executable}")
+            import subprocess
+            
+            # コンソールウィンドウを隠す設定 (Windows)
+            startupinfo = None
+            if sys.platform == 'win32':
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            
+            print("Downloading browser using subprocess...")
+            subprocess.check_call(
+                [sys.executable, "-m", "playwright", "install", "chromium"],
+                startupinfo=startupinfo
+            )
+            
+            if use_gui:
+                messagebox.showinfo("完了", "ブラウザの準備が完了しました。アプリを起動します。")
+                root.destroy()
+            else:
+                print("ブラウザの準備が完了しました。アプリを起動します。")
+            
+        except Exception as e:
+            # エラー時
+            error_msg = f"ブラウザのインストールに失敗しました:\n{e}"
+            if sys.platform == 'win32':
+                try:
+                    import ctypes
+                    ctypes.windll.user32.MessageBoxW(0, error_msg, "エラー", 0x10)
+                except:
+                    print(error_msg)
+            else:
+                print(error_msg)
+            sys.exit(1)
+
+# 起動時にチェック実行
+ensure_browser_installed()
 
 # Windowsでの文字化け対策
 if sys.platform == 'win32':
@@ -36,9 +105,9 @@ import datetime
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 # --- 設定・定数 ---
-BASE_DIR = get_base_path()
 # データ永続化: マイドキュメントに保存
-DATA_DIR = os.path.join(os.path.expanduser("~"), "Documents", "X_Auto_Poster")
+# USER_DATA_DIR は上で定義済み
+DATA_DIR = USER_DATA_DIR
 ACCOUNTS_FILE = os.path.join(DATA_DIR, 'accounts.csv')
 PROFILES_DIR = os.path.join(DATA_DIR, 'profiles')
 SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
@@ -65,7 +134,9 @@ def migrate_data():
     ]
 
     for filename, target_path in files_to_migrate:
-        source_path = os.path.join(BASE_DIR, filename)
+        # BASE_DIR は削除されたため、sys.executable等から再取得
+        base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(base_dir, filename)
         # コピー先になく、コピー元にある場合のみコピー
         if not os.path.exists(target_path) and os.path.exists(source_path):
             try:
@@ -75,7 +146,8 @@ def migrate_data():
                 print(f"データ移行エラー ({filename}): {e}")
 
     # 画像フォルダの中身も移行
-    source_images_dir = os.path.join(BASE_DIR, "images")
+    base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+    source_images_dir = os.path.join(base_dir, "images")
     if os.path.exists(source_images_dir):
         for item in os.listdir(source_images_dir):
             s = os.path.join(source_images_dir, item)
@@ -89,7 +161,7 @@ def migrate_data():
 # 起動時に移行実行
 migrate_data()
 APP_TITLE = "X自動投稿ツール"
-CURRENT_VERSION = "1.8.2"
+CURRENT_VERSION = "1.9.0"
 WINDOW_SIZE = "1000x700"
 
 # --- テーマ設定 ---

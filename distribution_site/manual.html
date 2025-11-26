@@ -85,12 +85,31 @@
 </head>
 
 <body>
-    <h1>X自動投稿アプリ 操作マニュアル (v1.6)</h1>
+    <h1>X自動投稿アプリ 操作マニュアル (v1.8)</h1>
+
+    <div class="note" style="border: 2px solid #ff0000; background-color: #fff0f0; color: #d8000c;">
+        <h3 style="margin-top: 0; color: #d8000c;">【重要】v1.6以前からアップデートされる方へ</h3>
+        <p><strong>v1.8より、データの保存場所が「マイドキュメント > X_Auto_Poster」に変更されました。</strong><br>
+            これまでのデータ（アカウントやログイン情報）を引き継ぐには、以下のファイル・フォルダを新しい保存場所に移動する必要があります。</p>
+
+        <strong>【移動対象のファイル】</strong>
+        <ul>
+            <li><code>accounts.csv</code> (アカウントリスト)</li>
+            <li><code>settings.json</code> (設定ファイル)</li>
+            <li><code>personas.json</code> (ペルソナデータ)</li>
+            <li><code>status_cache.json</code> (実行履歴)</li>
+            <li><code>profiles</code> フォルダ (ログイン情報・Cookie)</li>
+        </ul>
+        <p>※ アプリ起動時に一部のファイルは自動的にコピーされますが、<strong>`profiles` フォルダ（ログイン情報）は手動で移動する必要があります。</strong></p>
+        <p><strong>【ヒント】</strong> アプリのサイドバーにある <strong>「データフォルダを開く」</strong>
+            ボタンを押すと、新しい保存場所（マイドキュメント）が一発で開きます。そこに古いファイルをコピーすると簡単です。</p>
+    </div>
 
 
     <h2>1. はじめに</h2>
     <p>本アプリは、設定されたX（旧Twitter）アカウントを使用して、自動的にポスト（ツイート）を行うデスクトップアプリケーションです。<br>
-        v1.6では、<strong>AIペルソナ機能</strong>、<strong>単体実行機能</strong>、<strong>いいね数の範囲指定</strong>などが追加されました。</p>
+        v1.8では、<strong>AIペルソナ機能</strong>、<strong>単体実行機能</strong>、<strong>いいね数の範囲指定</strong>に加え、<strong>アカウント管理機能</strong>が強化されました。
+    </p>
     <div class="note">
         <strong>注意:</strong> 本アプリを使用する際は、必ずインターネットに接続してください。
     </div>
@@ -100,7 +119,7 @@
 
     <ul>
         <li><strong>サイドバー（左側）</strong>: 操作ボタン、バージョン情報、設定ボタンがあります。</li>
-        <li><strong>ログタブ（右側）</strong>: 動作ログが表示されます。</li>
+        <li><strong>ログタブ（右側）</strong>: 動作ログが表示されます。
         <li><strong>アカウント一覧タブ（右側）</strong>: 各アカウントのステータスと最終実行時間が表示されます。</li>
     </ul>
 
@@ -165,7 +184,7 @@
         <span class="step-number">手順 2:</span> <strong>「アカウント一覧」</strong> タブに切り替えると、進捗状況を確認できます。
     </div>
 
-    <h3>単体実行 (v1.6新機能)</h3>
+    <h3>単体実行</h3>
     <p>特定のアカウントだけをすぐに実行したい場合は、アカウント一覧の右側にある <strong>「▶」ボタン</strong> をクリックしてください。</p>
 
 
@@ -177,7 +196,7 @@
         <li><span style="color: red;">■ エラー</span>: 何らかの問題が発生しました（ログを確認してください）。</li>
     </ul>
 
-    <h2>6. 設定の変更 (v1.6)</h2>
+    <h2>6. 設定の変更</h2>
     <p>サイドバーの <strong>「設定」</strong> ボタンをクリックすると、設定画面が開きます。</p>
 
     <ul>
@@ -185,8 +204,6 @@
         <li><strong>待機時間</strong>: アカウント切り替え時の待機時間をランダムな範囲で設定します。</li>
         <li><strong>GIF添付確率</strong>: 投稿にGIF画像を添付する確率を設定します（0%で添付なし）。</li>
         <li><strong>自動いいね (Min-Max)</strong>: 投稿前にタイムラインの投稿に「いいね」をする回数を範囲で指定できます（例: 1〜5回）。</li>
-        <li><strong>自動いいね (Min-Max)</strong>: 投稿前にタイムラインの投稿に「いいね」をする回数を範囲で指定できます（例: 1〜5回）。
-        </li>
         <li><strong>AIモード</strong>: Gemini APIを使用して、ペルソナに基づいた投稿文を自動生成します。</li>
     </ul>
 
@@ -228,18 +245,24 @@
         <span class="step-number">3.</span> <strong>「保存」</strong> ボタンを押して完了です。
     </div>
 
-    <h2>8. アップデートについて</h2>
+    <h2>8. アカウント管理 (v1.8 新機能)</h2>
+    <p><strong>リスト更新:</strong> CSVファイルを直接編集した場合など、アプリを再起動せずに「リスト更新」ボタンを押すだけで最新の状態を読み込めます。</p>
+    <p><strong>アカウント追加:</strong> アプリ内の「アカウント追加」ボタンから、ユーザー名とパスワードを入力して直接リストに追加できるようになりました。</p>
+
+    <h2>9. データ引き継ぎと保存場所</h2>
+    <p>設定ファイルやアカウントリストは、<strong>「マイドキュメント > X_Auto_Poster」</strong>フォルダに保存されます。</p>
+    <p>新しいバージョンのアプリをダウンロードしても、このフォルダにあるデータはそのまま引き継がれるため、面倒な移行作業は不要です。</p>
+    <p>サイドバーの「データフォルダを開く」ボタンから、保存場所をすぐに確認できます。</p>
+
+    <h2>10. アップデートについて</h2>
     <p>新しいバージョンがリリースされた場合は、以下の手順でアップデートを行ってください。</p>
     <div class="step">
         <span class="step-number">手順 1:</span> 配布された新しいZipファイルを解凍します。
     </div>
     <div class="step">
-        <span class="step-number">手順 2:</span> フォルダの中にある <code>X_Auto_Poster.exe</code> と <code>browsers</code>
-        フォルダを、現在お使いのフォルダに上書きコピーしてください。
+        <span class="step-number">手順 2:</span> <strong>古いフォルダを削除し、新しいフォルダと入れ替えてください。</strong>
     </div>
-    <div class="note">
-        <strong>重要:</strong> <code>profiles</code> フォルダにはログイン情報（Cookie）が保存されています。フォルダごと入れ替えるのではなく、必ず「上書きコピー」を行ってください。
-    </div>
+
 </body>
 
 </html>
