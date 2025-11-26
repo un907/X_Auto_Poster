@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X自動投稿アプリ 操作マニュアル</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            border-left: 5px solid #007bff;
+            padding-left: 10px;
+            margin-top: 30px;
+            background: #f4f4f4;
+            padding: 10px;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: #555;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            border-radius: 5px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .step {
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        @media print {
+            body {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            h2 {
+                page-break-before: auto;
+            }
+
+            img {
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>X自動投稿アプリ 操作マニュアル (v1.8)</h1>
+
+    <div class="note" style="border: 2px solid #ff0000; background-color: #fff0f0; color: #d8000c;">
+        <h3 style="margin-top: 0; color: #d8000c;">【重要】v1.6以前からアップデートされる方へ</h3>
+        <p><strong>v1.8より、データの保存場所が「マイドキュメント > X_Auto_Poster」に変更されました。</strong><br>
+            これまでのデータ（アカウントやログイン情報）を引き継ぐには、以下のファイル・フォルダを新しい保存場所に移動する必要があります。</p>
+
+        <strong>【移動対象のファイル】</strong>
+        <ul>
+            <li><code>accounts.csv</code> (アカウントリスト)</li>
+            <li><code>settings.json</code> (設定ファイル)</li>
+            <li><code>personas.json</code> (ペルソナデータ)</li>
+            <li><code>status_cache.json</code> (実行履歴)</li>
+            <li><code>profiles</code> フォルダ (ログイン情報・Cookie)</li>
+        </ul>
+        <p>※ アプリ起動時に一部のファイルは自動的にコピーされますが、<strong>`profiles` フォルダ（ログイン情報）は手動で移動する必要があります。</strong></p>
+        <p><strong>【ヒント】</strong> アプリのサイドバーにある <strong>「データフォルダを開く」</strong>
+            ボタンを押すと、新しい保存場所（マイドキュメント）が一発で開きます。そこに古いファイルをコピーすると簡単です。</p>
+    </div>
+
+
+    <h2>1. はじめに</h2>
+    <p>本アプリは、設定されたX（旧Twitter）アカウントを使用して、自動的にポスト（ツイート）を行うデスクトップアプリケーションです。<br>
+        v1.8では、<strong>AIペルソナ機能</strong>、<strong>単体実行機能</strong>、<strong>いいね数の範囲指定</strong>に加え、<strong>アカウント管理機能</strong>が強化されました。
+    </p>
+    <div class="note">
+        <strong>注意:</strong> 本アプリを使用する際は、必ずインターネットに接続してください。
+    </div>
+
+    <h2>2. 画面構成</h2>
+    <p>アプリを起動すると、以下のメイン画面が表示されます。</p>
+
+    <ul>
+        <li><strong>サイドバー（左側）</strong>: 操作ボタン、バージョン情報、設定ボタンがあります。</li>
+        <li><strong>ログタブ（右側）</strong>: 動作ログが表示されます。
+        <li><strong>アカウント一覧タブ（右側）</strong>: 各アカウントのステータスと最終実行時間が表示されます。</li>
+    </ul>
+
+    <h2>3. 事前準備 (アカウントリストの作成)</h2>
+    <p>アプリを動かすために、アカウント情報が書かれた <code>accounts.csv</code> というファイルを作成して、アプリと同じフォルダに入れる必要があります。<br>
+        普段お使いの <strong>Googleスプレッドシート</strong> や <strong>Excel</strong> を使って簡単に作成できます。</p>
+
+    <h3>手順 1: スプレッドシートでデータを作成</h3>
+    <div class="step">
+        <span class="step-number">1.</span> 新しいスプレッドシート（またはExcel）を開きます。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> <strong>A1セル</strong> に <code>username</code> 、 <strong>B1セル</strong> に
+        <code>password</code> と入力します（半角英数）。
+    </div>
+    <div class="step">
+        <span class="step-number">3.</span> 2行目以降に、使用したいアカウントの <strong>ユーザー名（@以降）</strong> と <strong>パスワード</strong>
+        を入力していきます。
+    </div>
+
+    <div class="note">
+        <strong>注意:</strong> 1行目の <code>username</code> と <code>password</code> はそのままで、変更しないでください。
+    </div>
+
+    <h3>手順 2: CSV形式でダウンロード</h3>
+    <div class="step">
+        <span class="step-number">1.</span> メニューの <strong>「ファイル」</strong> をクリックします。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> <strong>「ダウンロード」</strong> &gt; <strong>「カンマ区切り形式 (.csv)」</strong>
+        を選択します。<br>
+        （Excelの場合は「名前を付けて保存」でファイルの種類を「CSV (コンマ区切り)」にします）
+    </div>
+
+    <h3>手順 3: ファイル名の変更と配置</h3>
+    <div class="step">
+        <span class="step-number">1.</span> ダウンロードしたファイルの名前を <code>accounts.csv</code> に変更します。<br>
+        （<code>accounts</code> だけではなく、拡張子 <code>.csv</code> まで確認してください）
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> そのファイルを、<strong>このアプリ（X_Auto_Poster）が入っているフォルダと同じ場所</strong> に移動してください。
+    </div>
+
+    <h2>4. 初回設定（ログイン）</h2>
+    <div class="step">
+        <span class="step-number">手順 1:</span> サイドバーの <strong>「初回ログイン設定（手動）」</strong> ボタンをクリックします。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 2:</span> ブラウザが起動し、Xのログイン画面が表示されます。手動でログインを行ってください。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 3:</span> ログインが完了し、ホーム画面が表示されると、アプリが自動的に検知してブラウザを閉じます。
+    </div>
+    <p>※ 全てのアカウントに対してこの操作を行ってください。</p>
+
+    <h2>5. 自動投稿の実行</h2>
+    <h3>一括実行</h3>
+    <div class="step">
+        <span class="step-number">手順 1:</span> サイドバーの <strong>「自動投稿開始」</strong> ボタンをクリックします（緑色のボタン）。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 2:</span> <strong>「アカウント一覧」</strong> タブに切り替えると、進捗状況を確認できます。
+    </div>
+
+    <h3>単体実行</h3>
+    <p>特定のアカウントだけをすぐに実行したい場合は、アカウント一覧の右側にある <strong>「▶」ボタン</strong> をクリックしてください。</p>
+
+
+    <p>ステータスの色は以下を表します：</p>
+    <ul>
+        <li><span style="color: gray;">■ 待機中</span>: まだ処理が始まっていません。</li>
+        <li><span style="color: orange;">■ 処理中</span>: 現在ログインまたは投稿を行っています。</li>
+        <li><span style="color: green;">■ 完了</span>: 投稿が正常に完了しました。</li>
+        <li><span style="color: red;">■ エラー</span>: 何らかの問題が発生しました（ログを確認してください）。</li>
+    </ul>
+
+    <h2>6. 設定の変更</h2>
+    <p>サイドバーの <strong>「設定」</strong> ボタンをクリックすると、設定画面が開きます。</p>
+
+    <ul>
+        <li><strong>ヘッドレスモード</strong>: ブラウザ画面を表示せずに実行する場合はONにします（動作確認時はOFF推奨）。</li>
+        <li><strong>待機時間</strong>: アカウント切り替え時の待機時間をランダムな範囲で設定します。</li>
+        <li><strong>GIF添付確率</strong>: 投稿にGIF画像を添付する確率を設定します（0%で添付なし）。</li>
+        <li><strong>自動いいね (Min-Max)</strong>: 投稿前にタイムラインの投稿に「いいね」をする回数を範囲で指定できます（例: 1〜5回）。</li>
+        <li><strong>AIモード</strong>: Gemini APIを使用して、ペルソナに基づいた投稿文を自動生成します。</li>
+    </ul>
+
+    <h2>7. AI機能の設定 (Gemini APIキーの取得)</h2>
+    <p>AIペルソナ機能を使用するには、Googleの無料AI「Gemini」のAPIキーが必要です。<br>
+        以下の手順で取得してください（所要時間：約3分）。</p>
+
+    <h3>手順 1: Google AI Studioにアクセス</h3>
+    <div class="step">
+        <span class="step-number">1.</span> ブラウザで <a href="https://aistudio.google.com/app/apikey"
+            target="_blank">Google AI Studio (API Key取得ページ)</a> にアクセスします。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> Googleアカウントでログインします。
+    </div>
+
+    <h3>手順 2: キーの作成</h3>
+    <div class="step">
+        <span class="step-number">1.</span> 画面上の <strong>「Create API key」</strong> ボタンをクリックします。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> <strong>「Create API key in new project」</strong> を選択します。
+    </div>
+    <div class="step">
+        <span class="step-number">3.</span> 数秒待つと、<code>AIza...</code> から始まる長い文字列が表示されます。これがあなたのAPIキーです。
+    </div>
+    <div class="step">
+        <span class="step-number">4.</span> <strong>「Copy」</strong> ボタンを押してコピーします。
+    </div>
+
+    <h3>手順 3: アプリに設定</h3>
+    <div class="step">
+        <span class="step-number">1.</span> アプリのサイドバーにある <strong>「設定」</strong> ボタンを押します。
+    </div>
+    <div class="step">
+        <span class="step-number">2.</span> <strong>「Gemini API Key」</strong> という欄に、コピーしたキーを貼り付けます。
+    </div>
+    <div class="step">
+        <span class="step-number">3.</span> <strong>「保存」</strong> ボタンを押して完了です。
+    </div>
+
+    <h2>8. アカウント管理 (v1.8 新機能)</h2>
+    <p><strong>リスト更新:</strong> CSVファイルを直接編集した場合など、アプリを再起動せずに「リスト更新」ボタンを押すだけで最新の状態を読み込めます。</p>
+    <p><strong>アカウント追加:</strong> アプリ内の「アカウント追加」ボタンから、ユーザー名とパスワードを入力して直接リストに追加できるようになりました。</p>
+
+    <h2>9. データ引き継ぎと保存場所</h2>
+    <p>設定ファイルやアカウントリストは、<strong>「マイドキュメント > X_Auto_Poster」</strong>フォルダに保存されます。</p>
+    <p>新しいバージョンのアプリをダウンロードしても、このフォルダにあるデータはそのまま引き継がれるため、面倒な移行作業は不要です。</p>
+    <p>サイドバーの「データフォルダを開く」ボタンから、保存場所をすぐに確認できます。</p>
+
+    <h2>10. アップデートについて</h2>
+    <p>新しいバージョンがリリースされた場合は、以下の手順でアップデートを行ってください。</p>
+    <div class="step">
+        <span class="step-number">手順 1:</span> 配布された新しいZipファイルを解凍します。
+    </div>
+    <div class="step">
+        <span class="step-number">手順 2:</span> <strong>古いフォルダを削除し、新しいフォルダと入れ替えてください。</strong>
+    </div>
+
+</body>
+
+</html>
