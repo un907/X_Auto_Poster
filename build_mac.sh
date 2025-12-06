@@ -23,7 +23,6 @@ rm -rf build dist/X_Auto_Poster.app
 
 # ブラウザは同梱しないため、--add-data オプションは削除
 pyinstaller --noconfirm --onefile --windowed --name "X_Auto_Poster" \
-    --icon="icon-windowed.icns" \
     --add-data "settings.json:." \
     --add-data "accounts.csv:." \
     --add-data "personas.json:." \
@@ -34,8 +33,8 @@ pyinstaller --noconfirm --onefile --windowed --name "X_Auto_Poster" \
 
 # 3. Create Distribution Zip
 echo "[3/4] Creating Distribution Zip..."
-PACKAGE_DIR="Output_Mac_v1.9.0"
-ZIP_FILE="X_Auto_Poster_Mac_v1.9.0.zip"
+PACKAGE_DIR="Output_Mac_v1.9.1"
+ZIP_FILE="X_Auto_Poster_Mac_v1.9.1.zip"
 
 rm -rf "$PACKAGE_DIR"
 mkdir -p "$PACKAGE_DIR"

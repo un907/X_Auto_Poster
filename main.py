@@ -12,59 +12,87 @@ os.environ["PLAYWRIGHT_BROWSERS_PATH"] = BROWSERS_DIR
 
 def ensure_browser_installed():
     """
-    必要なブラウザ(chromium)がインストールされているか確認し、
+    必要なブラウザ(Firefox)がインストールされているか確認し、
     なければ自動的にインストールする。
-    """
-    # 簡易チェック: フォルダが存在し、中身が空でなければOKとみなす
-    # 本来は playwright._impl._driver.compute_driver_executable() などで厳密にチェックすべきだが、
-    # ユーザー体験を優先し、フォルダの有無で判断する。
-    # Playwrightはバージョンごとにフォルダを作るため (例: chromium-1148)、
-    # バージョン不一致の場合はPlaywrightがエラーを吐く -> その場合は再インストールが必要。
     
-    if not os.path.exists(BROWSERS_DIR) or not os.listdir(BROWSERS_DIR):
-        print("ブラウザが見つかりません。インストールを開始します...")
+    PyInstallerでバンドルされた環境でも動作するよう、
+    subprocess経由ではなくPlaywright Python APIを直接使用する。
+    """
+    # Firefoxフォルダのチェック（firefox-XXXの形式で存在する）
+    firefox_exists = False
+    if os.path.exists(BROWSERS_DIR):
+        for item in os.listdir(BROWSERS_DIR):
+            if item.startswith("firefox"):
+                firefox_exists = True
+                break
+    
+    if not firefox_exists:
+        print("ブラウザ(Firefox)が見つかりません。インストールを開始します...")
         
         # GUIがない段階なので、簡易的なウィンドウを出すか、コンソールに出力
-        # ここではTkinterのルートウィンドウを一時的に作ってメッセージを出す
+        root = None
+        use_gui = False
         try:
-            try:
-                import tkinter as tk
-                from tkinter import messagebox
-                
-                root = tk.Tk()
-                root.withdraw() # メインウィンドウは隠す
-                
-                messagebox.showinfo(
-                    "初回セットアップ", 
-                    "初回起動のため、ブラウザのダウンロードを行います。\n"
-                    "これには数分かかる場合があります。\n"
-                    "「OK」を押すと開始します。"
-                )
-                use_gui = True
-            except ImportError:
-                print("GUIモジュール(tkinter)が見つかりません。コンソールモードで実行します。")
-                print("初回起動のため、ブラウザのダウンロードを行います。")
-                input("Enterキーを押すと開始します...")
-                use_gui = False
+            import tkinter as tk
+            from tkinter import messagebox
             
-            # インストール実行
-            print(f"Current Python: {sys.executable}")
+            root = tk.Tk()
+            root.withdraw()  # メインウィンドウは隠す
+            
+            messagebox.showinfo(
+                "初回セットアップ", 
+                "初回起動のため、ブラウザ(Firefox)のダウンロードを行います。\n"
+                "これには数分かかる場合があります。\n"
+                "「OK」を押すと開始します。"
+            )
+            use_gui = True
+        except ImportError:
+            print("GUIモジュール(tkinter)が見つかりません。コンソールモードで実行します。")
+            print("初回起動のため、ブラウザのダウンロードを行います。")
+        except Exception as e:
+            print(f"GUI初期化エラー（続行します）: {e}")
+        
+        try:
+            # Playwright Python APIを使用してブラウザをインストール
+            # PyInstallerでバンドルされた環境でも動作する
+            print("Installing Firefox browser using Playwright API...")
+            
+            from playwright._impl._driver import compute_driver_executable
+            from playwright._impl._transport import PipeTransport
             import subprocess
+            
+            # Playwrightのドライバーパスを取得
+            driver_executable = compute_driver_executable()
+            
+            # インストールコマンドを実行
+            env = os.environ.copy()
+            env["PLAYWRIGHT_BROWSERS_PATH"] = BROWSERS_DIR
             
             # コンソールウィンドウを隠す設定 (Windows)
             startupinfo = None
+            creationflags = 0
             if sys.platform == 'win32':
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                creationflags = subprocess.CREATE_NO_WINDOW
             
-            print("Downloading browser using subprocess...")
-            subprocess.check_call(
-                [sys.executable, "-m", "playwright", "install", "chromium"],
-                startupinfo=startupinfo
+            # Playwrightのドライバーを使ってFirefoxをインストール
+            result = subprocess.run(
+                [driver_executable, "install", "firefox"],
+                env=env,
+                capture_output=True,
+                text=True,
+                startupinfo=startupinfo,
+                creationflags=creationflags if sys.platform == 'win32' else 0
             )
             
-            if use_gui:
-                messagebox.showinfo("完了", "ブラウザの準備が完了しました。アプリを起動します。")
+            if result.returncode != 0:
+                raise Exception(f"インストール失敗: {result.stderr}")
+            
+            print("Firefox browser installed successfully!")
+            
+            if use_gui and root:
+                messagebox.showinfo("完了", "ブラウザ(Firefox)の準備が完了しました。アプリを起動します。")
                 root.destroy()
             else:
                 print("ブラウザの準備が完了しました。アプリを起動します。")
@@ -72,14 +100,21 @@ def ensure_browser_installed():
         except Exception as e:
             # エラー時
             error_msg = f"ブラウザのインストールに失敗しました:\n{e}"
-            if sys.platform == 'win32':
+            print(error_msg)
+            
+            if use_gui and root:
+                try:
+                    messagebox.showerror("エラー", error_msg)
+                    root.destroy()
+                except:
+                    pass
+            elif sys.platform == 'win32':
                 try:
                     import ctypes
                     ctypes.windll.user32.MessageBoxW(0, error_msg, "エラー", 0x10)
                 except:
-                    print(error_msg)
-            else:
-                print(error_msg)
+                    pass
+            
             sys.exit(1)
 
 # 起動時にチェック実行
@@ -161,7 +196,7 @@ def migrate_data():
 # 起動時に移行実行
 migrate_data()
 APP_TITLE = "X自動投稿ツール"
-CURRENT_VERSION = "1.9.0"
+CURRENT_VERSION = "1.9.1"
 WINDOW_SIZE = "1000x700"
 
 # --- テーマ設定 ---
@@ -661,8 +696,8 @@ class PersonaEditorWindow(ctk.CTkToplevel):
             # ここでは簡易的に既存のブラウザ起動ロジックを流用したいが、クラス外なのでPlaywrightを直接呼ぶ
             # ただし、ログインセッションが必要なので、profilesディレクトリを指定する
             
-            base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-            user_data_dir = os.path.join(base_path, "profiles", self.username)
+            # PROFILES_DIR は既にフルパスで定義済み (~/Documents/X_Auto_Poster/profiles)
+            user_data_dir = os.path.join(PROFILES_DIR, self.username)
             
             if not os.path.exists(user_data_dir):
                 messagebox.showerror("エラー", f"{self.username} のプロファイルが見つかりません。\n一度ログインを行ってください。")
@@ -1017,8 +1052,8 @@ class AutoPostApp(ctk.CTk):
                     self.log(f"抽出中 ({i+1}/{len(self.accounts)}): {username}")
                     self.update_account_status(username, "分析中...", "purple")
                     
-                    base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-                    user_data_dir = os.path.join(base_path, "profiles", username)
+                    # PROFILES_DIR は既にフルパスで定義済み
+                    user_data_dir = os.path.join(PROFILES_DIR, username)
                     
                     if not os.path.exists(user_data_dir):
                         self.log(f"スキップ: {username} (プロファイルなし)")
@@ -1474,8 +1509,8 @@ class AutoPostApp(ctk.CTk):
         
         self.update_account_status(username, "操作中...", "blue")
         
-        base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-        user_data_path = os.path.join(base_path, PROFILES_DIR, username)
+        # PROFILES_DIR は既にフルパスで定義済み
+        user_data_path = os.path.join(PROFILES_DIR, username)
         
         try:
             with sync_playwright() as p:
@@ -1592,8 +1627,8 @@ class AutoPostApp(ctk.CTk):
                 self.update_status(f"処理中: {username}")
                 self.update_account_status(username, "処理中...", "orange")
                 
-                base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-                user_data_path = os.path.join(base_path, PROFILES_DIR, username)
+                # PROFILES_DIR は既にフルパスで定義済み
+                user_data_path = os.path.join(PROFILES_DIR, username)
                 
                 try:
                     context = p.firefox.launch_persistent_context(
@@ -1952,8 +1987,8 @@ class AutoPostApp(ctk.CTk):
                 self.update_status(f"設定中: {username}")
                 self.update_account_status(username, "設定中...", "orange")
                 
-                base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-                user_data_path = os.path.join(base_path, PROFILES_DIR, username)
+                # PROFILES_DIR は既にフルパスで定義済み
+                user_data_path = os.path.join(PROFILES_DIR, username)
                 
                 try:
                     context = p.firefox.launch_persistent_context(
@@ -2167,8 +2202,8 @@ class AutoPostApp(ctk.CTk):
                 self.update_status(f"処理中: {username} ({i+1}/{len(accounts_to_run)})")
                 self.update_account_status(username, "処理中...", "orange")
                 
-                base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-                user_data_path = os.path.join(base_path, PROFILES_DIR, username)
+                # PROFILES_DIR は既にフルパスで定義済み
+                user_data_path = os.path.join(PROFILES_DIR, username)
                 
                 try:
                     context = p.firefox.launch_persistent_context(
@@ -2394,17 +2429,15 @@ class AutoPostApp(ctk.CTk):
 
             # --- 画像/GIF画像の添付 (ランダム) ---
             if random.random() * 100 < self.settings["gif_probability"]:
-                # まずローカル画像をチェック
-                base_path = os.path.dirname(os.path.abspath(sys.argv[0])) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
-                images_dir = os.path.join(base_path, "images")
+                # IMAGES_DIR は既にフルパスで定義済み (~/Documents/X_Auto_Poster/images)
                 images = []
-                if os.path.exists(images_dir):
-                    images = [f for f in os.listdir(images_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
+                if os.path.exists(IMAGES_DIR):
+                    images = [f for f in os.listdir(IMAGES_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
                 
                 if images:
                     # 画像があればそれをアップロード
                     target_image = random.choice(images)
-                    image_path = os.path.join(images_dir, target_image)
+                    image_path = os.path.join(IMAGES_DIR, target_image)
                     self.log(f"画像を添付します: {target_image}")
                     try:
                         # input[type="file"] を探してアップロード
